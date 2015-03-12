@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: HTML5 Video Background
- * Plugin URI: http://github.com/wp-html5-video-bg
- * Description: Creates a fullscreen video background using html5 video. Fallsback to an image with a link.
+ * Plugin URI: http://github.com/loljs/wp-html5-video-bg
+ * Description: Creates a fullscreen video background using html5 video. Falls back to an image with a link.
  * Version: 1.0
  * Author: Jonathan Brito
  * Author URI: http://github.com/loljs
@@ -14,16 +14,8 @@ $VIDBG = "";
 
 if( !class_exists('VIDBG') ){
 	
-
 	class VIDBG {
-
-		static $plugin_table_name = 'vidbg_functions';
-		static $plugin_table_version = '1';
-		static $plugin_option_name = 'vidbg_options';
 		static $plugin_menu_slug = 'vidbg_menu';
-		static $plugin_post = '';
-
-		var $_vars = array();
 
 		function __construct() {
 			add_action( 'admin_menu' , array( __CLASS__ , 'register_admin_menu' ) );
@@ -54,8 +46,6 @@ if( !class_exists('VIDBG') ){
 			$_vidbg_autoplay = isset( $values['vidbg_autoplay'] ) ? esc_attr( $values['vidbg_autoplay'][0] ) : '';
 			$_vidbg_loop = isset( $values['vidbg_loop'] ) ? esc_attr( $values['vidbg_loop'][0] ) : '';
 			$_vidbg_muted = isset( $values['vidbg_muted'] ) ? esc_attr( $values['vidbg_muted'][0] ) : '';
-			// Debug
-			// print_r($values);
 
 			// Render meta box form
 			echo '<label for="vidbg_enabled">';
@@ -139,27 +129,27 @@ if( !class_exists('VIDBG') ){
 		        'br' => array()
 		    );
 
-				// Pz if we're doing an auto save
+            // Pz if we're doing an auto save
 		    if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 		     
 		    // if our nonce isn't there, or we can't verify it, pz
 		    if( !isset( $_POST['vidbg_nonce'] ) || !wp_verify_nonce( $_POST['vidbg_nonce'], 'vidbg_verify_nonce' ) ) return;
 		     
 		    // if our current user can't edit this post, pz
-		    if( !current_user_can( 'edit_post' ) ) return;
+            if( !current_user_can( 'edit_post' ) ) return;
 
-		    // All's good, update fields
-		    $chk = isset( $_POST['vidbg_enabled'] ) && $_POST['vidbg_enabled'] ? 'true' : 'false';
-    		update_post_meta( $post_id, 'vidbg_enabled', $chk );
+            // All's good, update fields
+            $chk = isset( $_POST['vidbg_enabled'] ) && $_POST['vidbg_enabled'] ? 'true' : 'false';
+            update_post_meta( $post_id, 'vidbg_enabled', $chk );
 
-    		$chk_autoplay = isset( $_POST['vidbg_autoplay'] ) && $_POST['vidbg_autoplay'] ? 'true' : 'false';
-    		update_post_meta( $post_id, 'vidbg_autoplay', $chk_autoplay );
+            $chk_autoplay = isset( $_POST['vidbg_autoplay'] ) && $_POST['vidbg_autoplay'] ? 'true' : 'false';
+            update_post_meta( $post_id, 'vidbg_autoplay', $chk_autoplay );
 
-    		$chk_loop = isset( $_POST['vidbg_loop'] ) && $_POST['vidbg_loop'] ? 'true' : 'false';
-    		update_post_meta( $post_id, 'vidbg_loop', $chk_loop );
+            $chk_loop = isset( $_POST['vidbg_loop'] ) && $_POST['vidbg_loop'] ? 'true' : 'false';
+            update_post_meta( $post_id, 'vidbg_loop', $chk_loop );
 
-    		$chk_muted = isset( $_POST['vidbg_muted'] ) && $_POST['vidbg_muted'] ? 'true' : 'false';
-    		update_post_meta( $post_id, 'vidbg_muted', $chk_muted );
+            $chk_muted = isset( $_POST['vidbg_muted'] ) && $_POST['vidbg_muted'] ? 'true' : 'false';
+            update_post_meta( $post_id, 'vidbg_muted', $chk_muted );
 
 		    if ( isset( $_POST['vidbg_vid_url_mp4']) ) {
 		    	update_post_meta( $post_id, 'vidbg_vid_url_mp4', esc_attr( $_POST['vidbg_vid_url_mp4'] ) );
@@ -180,8 +170,6 @@ if( !class_exists('VIDBG') ){
 
 		// Generate fullscreen video bg html
 		function vidbg_append_vid_html() {
-			//if (!is_single()) return;
-
 			$curr_post = $GLOBALS['post'];
 			$values = get_post_custom( $curr_post->ID );
 			$_vidbg_enabled = isset( $values['vidbg_enabled'] ) ? esc_attr( $values['vidbg_enabled'][0] ) : '';
@@ -245,13 +233,13 @@ if( !class_exists('VIDBG') ){
 			echo '</style>';
 		}
 
-		// add stylesheet to make video fullscreen
+		// add stylesheet to make video fullscreen js
 		function vidbg_add_scripts () {
 			wp_register_style( 'vidbg_fullscreen_style', plugins_url('css/style.css', __FILE__) );
-			//wp_register_style( 'vidbg_controls_font', plugins_url('css/fontello.css'),  __FILE__ );
+			wp_register_style( 'vidbg_controls_font', plugins_url('css/fontello.css'),  __FILE__ );
 			wp_enqueue_script( 'vidbg_controls_js', plugins_url('js/html5-video-background.js', __FILE__) );
 
-			//wp_enqueue_style( 'vidbg_controls_font' );
+			wp_enqueue_style( 'vidbg_controls_font' );
 			wp_enqueue_style( 'vidbg_fullscreen_style' );
 			wp_enqueue_script( 'vidbg_controls_js' );
 		}
@@ -265,28 +253,23 @@ if( !class_exists('VIDBG') ){
 				self::$plugin_menu_slug,
 				array( __CLASS__, "do_admin_menu" ),
 				null,
-				//plugin_dir_url( __FILE__ ) . "/php-icon.png",
 				null
 			);
 		}
 
 		function do_admin_menu() {
 		?>
-			 <div class='wrap'>
-				<h2>Fullscreen Video Background for Posts and Pages</h2>
-
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-					<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-				</form>
-			</div>
+          <div class='wrap'>
+            <h2>Fullscreen Video Background for Posts and Pages</h2>
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+              <input type="hidden" name="cmd" value="_s-xclick">
+              <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+              <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+              <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
+          </div>
 		<?php
 		}
-
-		
-		//
 	}
 
 	function register_vidbg(){
