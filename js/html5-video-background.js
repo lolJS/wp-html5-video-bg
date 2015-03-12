@@ -8,17 +8,6 @@
 			playClicked = false,
 			isHidden = false;
 
-		$("#zinman_tagline input").on('click', function () {
-			video.pause();
-			video.currentTime = 0.1;
-			videoControls.show();
-			close.show();
-			video.muted = false;
-			video.play();
-			$("#zinman_overlay").fadeOut();
-			playClicked = true;
-		});
-
 		playPause.on('click', function () {
 			if (!video.paused) {
 				playPause.toggleClass('icon-pause');
@@ -43,7 +32,7 @@
 			}
 		});
 
-		$("#vidbg_fullscreen").on("ended", function () {
+		$(video).on('ended', function () {
 			playPause.toggleClass('icon-pause');
 			playPause.toggleClass('icon-play');
 		});
@@ -74,8 +63,6 @@
 			video.currentTime = 0.1;
 			video.play();
 			video.muted = true;
-
-			$("#zinman_overlay").fadeIn();
 		});
 
 	});
